@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Start Young Grow Strong</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        body {
+            margin: 0;
+            background-image: url('background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        .top-bar {
+            background-color: #000;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+        .logo-wrapper {
+            height: 150px;
+            width: 150px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        .logo-wrapper img {
+            height: 225px;
+            width: 225px;
+            object-fit: cover;
+        }
+        .top-bar h1 {
+            margin: 0;
+            font-size: 56px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #ffd700, #9b59b6, #3498db);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .content-wrapper {
+            display: flex;
+            gap: 40px;
+            padding: 40px;
+        }
+        .left-column {
+            flex: 0 0 auto;
+            max-width: 800px;
+        }
+        .intro {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+        .intro h2 {
+            text-align: left;
+            font-size: 42px;
+            margin-bottom: 30px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #ff6b6b, #ffd700, #9b59b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            -webkit-text-stroke: 3px #000;
+            paint-order: stroke fill;
+        }
+        .intro ol {
+            font-size: 18px;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            list-style-type: none;
+            counter-reset: item;
+            font-weight: bold;
+        }
+        .intro li::before {
+            content: counter(item) ". ";
+            counter-increment: item;
+            color: #9b59b6;
+            font-weight: bold;
+            font-size: 22px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+        }
+        .intro li {
+            margin-bottom: 20px;
+        }
+        .intro strong {
+            color: #ffd700;
+            font-size: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+        }
+        .main-square {
+            flex: 0 0 auto;
+            width: 500px;
+            height: 700px;
+            border: 5px solid #9b59b6;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 0;
+            margin-top: 200px;
+        }
+        .inner-square {
+            border: 2px solid #9b59b6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        .inner-square video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .form-section {
+            margin-top: 40px;
+            margin-left: 50px;
+        }
+        .form-section h2 {
+            color: #fff;
+            font-size: 32px;
+            margin-bottom: 20px;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
+        }
+        .form-section form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .form-section input,
+        .form-section textarea,
+        .form-section select {
+            padding: 12px;
+            border: 2px solid #9b59b6;
+            border-radius: 5px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.9);
+        }
+        .birth-date {
+            display: flex;
+            gap: 10px;
+        }
+        .birth-date select {
+            flex: 1;
+        }
+        .gender-group {
+            display: flex;
+            gap: 20px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #9b59b6;
+            border-radius: 5px;
+        }
+        .gender-group label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .phone-group {
+            display: flex;
+            gap: 10px;
+        }
+        .phone-group select {
+            flex: 0 0 120px;
+        }
+        .phone-group input {
+            flex: 1;
+        }
+        .address-group {
+            display: flex;
+            gap: 10px;
+        }
+        .address-group input {
+            flex: 1;
+        }
+        .jobs-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #9b59b6;
+            border-radius: 5px;
+        }
+        .jobs-group label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .subjects-group {
+            display: none;
+            flex-wrap: wrap;
+            gap: 15px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #9b59b6;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .subjects-group label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .form-section button {
+            padding: 15px;
+            background: #9b59b6;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .form-section button:hover {
+            background: #8e44ad;
+        }
+        #map {
+            display: none;
+            width: 100%;
+            height: 500px;
+            border: 3px solid #9b59b6;
+            border-radius: 5px;
+            margin-top: 20px;
+            z-index: 1;
+        }
+        .girl-image {
+            width: 500px;
+            height: 750px;
+            margin-top: 20px;
+            object-fit: cover;
+            object-position: top;
+            background: transparent;
+            filter: brightness(1.1) contrast(1.1);
+            isolation: isolate;
+        }
+        .girl-image::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: white;
+            mix-blend-mode: screen;
+        }
+        .copyright {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            color: #fff;
+            font-size: 14px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px 15px;
+            border-radius: 5px;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const nameInputs = document.querySelectorAll('input[placeholder*="Name"]');
+            nameInputs.forEach(input => {
+                input.addEventListener('keypress', function(e) {
+                    const char = String.fromCharCode(e.which);
+                    if (!/[A-Za-z]/.test(char)) {
+                        e.preventDefault();
+                    }
+                });
+            });
+            
+            const phoneInput = document.querySelector('input[placeholder*="Phone"]');
+            const countrySelect = document.querySelector('.phone-group select');
+            
+            const phoneLengths = {
+                '+1': 10, '+7': 10, '+20': 10, '+27': 9, '+30': 10, '+31': 9, '+32': 9, '+33': 9,
+                '+34': 9, '+36': 9, '+39': 10, '+40': 10, '+41': 9, '+43': 10, '+44': 10, '+45': 8,
+                '+46': 9, '+47': 8, '+48': 9, '+49': 11, '+51': 9, '+52': 10, '+53': 8, '+54': 10,
+                '+55': 11, '+56': 9, '+57': 10, '+58': 10, '+60': 10, '+61': 9, '+62': 11, '+63': 10,
+                '+64': 9, '+65': 8, '+66': 9, '+81': 10, '+82': 10, '+84': 10, '+86': 11, '+90': 10,
+                '+91': 10, '+92': 10, '+93': 9, '+94': 9, '+95': 9, '+98': 10, '+212': 9, '+213': 9,
+                '+216': 8, '+218': 9, '+220': 7, '+221': 9, '+222': 8, '+223': 8, '+224': 9, '+225': 10,
+                '+226': 8, '+227': 8, '+228': 8, '+229': 8, '+230': 8, '+231': 9, '+232': 8, '+233': 9,
+                '+234': 10, '+237': 9, '+241': 7, '+244': 9, '+249': 9, '+250': 9, '+251': 9, '+252': 8,
+                '+253': 8, '+254': 10, '+255': 9, '+256': 9, '+257': 8, '+258': 9, '+260': 9, '+261': 9,
+                '+263': 9, '+264': 9, '+265': 9, '+266': 8, '+267': 8, '+351': 9, '+352': 9, '+353': 9,
+                '+354': 7, '+355': 9, '+356': 8, '+357': 8, '+358': 10, '+359': 9, '+370': 8, '+371': 8,
+                '+372': 8, '+373': 8, '+374': 8, '+375': 9, '+376': 6, '+377': 8, '+380': 9, '+381': 9,
+                '+382': 8, '+385': 9, '+386': 9, '+387': 8, '+389': 8, '+420': 9, '+421': 9, '+501': 7,
+                '+502': 8, '+503': 8, '+504': 8, '+505': 8, '+506': 8, '+507': 8, '+509': 8, '+591': 8,
+                '+593': 9, '+595': 9, '+597': 7, '+598': 8, '+673': 7, '+679': 7, '+852': 8, '+853': 8,
+                '+855': 9, '+856': 9, '+880': 10, '+886': 9, '+960': 7, '+961': 8, '+962': 9, '+963': 9,
+                '+964': 10, '+965': 8, '+966': 9, '+967': 9, '+968': 8, '+970': 9, '+971': 9, '+972': 9,
+                '+973': 8, '+974': 8, '+975': 8, '+976': 8, '+977': 10, '+992': 9, '+993': 8, '+994': 9,
+                '+995': 9, '+996': 9, '+998': 9
+            };
+            
+            if (phoneInput && countrySelect) {
+                phoneInput.disabled = true;
+                phoneInput.placeholder = 'Select country code first';
+                
+                phoneInput.addEventListener('keypress', function(e) {
+                    const char = String.fromCharCode(e.which);
+                    if (!/[0-9]/.test(char)) {
+                        e.preventDefault();
+                    }
+                });
+                
+                countrySelect.addEventListener('change', function() {
+                    const code = this.value;
+                    if (code) {
+                        phoneInput.disabled = false;
+                        phoneInput.placeholder = 'Phone Number';
+                        const maxLength = phoneLengths[code] || 15;
+                        phoneInput.setAttribute('maxlength', maxLength);
+                    } else {
+                        phoneInput.disabled = true;
+                        phoneInput.placeholder = 'Select country code first';
+                        phoneInput.value = '';
+                    }
+                });
+            }
+            
+            const jobRadios = document.querySelectorAll('input[name="job"]');
+            const subjectsGroup = document.getElementById('subjects');
+            jobRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.value === 'tutoring' && this.checked) {
+                        subjectsGroup.style.display = 'flex';
+                    } else {
+                        subjectsGroup.style.display = 'none';
+                    }
+                });
+            });
+            
+            const emailInput = document.querySelector('input[type="email"]');
+            if (emailInput) {
+                emailInput.addEventListener('keypress', function(e) {
+                    const char = String.fromCharCode(e.which);
+                    if (char === '@') {
+                        e.preventDefault();
+                    }
+                });
+                
+                emailInput.addEventListener('input', function() {
+                    this.value = this.value.replace(/@/g, '').replace(/gmail/gi, '').replace(/\.com/gi, '');
+                });
+                
+                emailInput.addEventListener('blur', function() {
+                    let value = this.value.trim();
+                    if (value && !value.includes('@')) {
+                        this.value = value + '@gmail.com';
+                    }
+                });
+            }
+            
+            let userLat = null;
+            let userLon = null;
+            let map = null;
+            
+            const form = document.querySelector('form');
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                if (userLat && userLon) {
+                    const selectedJob = document.querySelector('input[name="job"]:checked');
+                    if (!selectedJob) {
+                        alert('Please select a job type');
+                        return;
+                    }
+                    const mapDiv = document.getElementById('map');
+                    mapDiv.style.display = 'block';
+                    if (!map) {
+                        map = L.map('map').setView([userLat, userLon], 14);
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            attribution: '© OpenStreetMap'
+                        }).addTo(map);
+                    } else {
+                        map.setView([userLat, userLon], 14);
+                    }
+                    L.marker([userLat, userLon]).addTo(map).bindPopup('Your Location').openPopup();
+                    const jobTags = {
+                        'tutoring': 'amenity=school',
+                        'cashier': 'shop=supermarket',
+                        'servant': 'amenity=cafe|amenity=restaurant',
+                        'phone_assistant': 'shop=mobile_phone',
+                        'barber': 'shop=hairdresser',
+                        'barber_assistant': 'shop=hairdresser',
+                        'carpenter': 'craft=carpenter'
+                    };
+                    const tag = jobTags[selectedJob.value];
+                    const radius = 2000;
+                    const query = `[out:json];(node[${tag}](around:${radius},${userLat},${userLon}););out;`;
+                    fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            data.elements.forEach(place => {
+                                L.marker([place.lat, place.lon]).addTo(map)
+                                    .bindPopup(place.tags.name || 'Job Location');
+                            });
+                        });
+                    mapDiv.scrollIntoView({ behavior: 'smooth' });
+                }
+                form.reset();
+                phoneInput.disabled = true;
+                phoneInput.placeholder = 'Select country code first';
+                subjectsGroup.style.display = 'none';
+            });
+            
+            document.getElementById('useLocation').addEventListener('click', function() {
+                if (navigator.geolocation) {
+                    const options = {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 0
+                    };
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        userLat = position.coords.latitude;
+                        userLon = position.coords.longitude;
+                        alert('Location saved! Now fill the form and click Submit to find jobs near you.');
+                    }, function(error) {
+                        let msg = 'Unable to get your location. ';
+                        if (error.code === 1) msg += 'Please allow location access.';
+                        else if (error.code === 2) msg += 'Location unavailable.';
+                        else if (error.code === 3) msg += 'Request timeout.';
+                        alert(msg);
+                    }, options);
+                } else {
+                    alert('Geolocation is not supported by your browser');
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="top-bar">
+        <div class="logo-wrapper">
+            <img src="logo.jpg" alt="Logo">
+        </div>
+        <h1>Start Young Grow Strong</h1>
+    </div>
+    
+    <div class="content-wrapper">
+        <div class="left-column">
+        <div class="intro">
+        <h2>🌟 Why TeenWork Hub Matters</h2>
+        <ol>
+            <li><strong>Start Your Journey Early</strong><br>
+            Working as a teen helps you build confidence and gives you a strong start in life. 🚀</li>
+            
+            <li><strong>Learn Real Responsibility</strong><br>
+            You'll manage your time, tasks, and commitments — skills that make you stand out. ⏳💼</li>
+            
+            <li><strong>Understand the Value of Money</strong><br>
+            Early work teaches you how effort turns into income, and how to use money wisely. 💰✨</li>
+            
+            <li><strong>Gain Real-World Experience</strong><br>
+            You meet new people, face real challenges, and learn how the world truly works. 🌍🤝</li>
+            
+            <li><strong>Build Strong Social &amp; Communication Skills</strong><br>
+            Working helps you talk, listen, and connect with different types of people. 🗣️💬</li>
+            
+            <li><strong>Become More Independent</strong><br>
+            Taking your first job helps you rely on yourself and make smarter decisions. 💪🔥</li>
+            
+            <li><strong>Prepare for Future Opportunities</strong><br>
+            Experience now = a stronger CV and better chances later. 🎯📈</li>
+            
+            <li><strong>Your First Step Starts Here</strong><br>
+            Fill out the form and begin your journey toward growth, success, and new skills. 🌱🌟</li>
+        </ol>
+        </div>
+        
+        <div class="form-section">
+            <h2>📝 Job Form</h2>
+            <form>
+                <input type="text" placeholder="First Name" pattern="[A-Za-z]+" title="Only letters are allowed" required>
+                <input type="text" placeholder="Second Name" pattern="[A-Za-z]+" title="Only letters are allowed" required>
+                <input type="text" placeholder="Third Name" pattern="[A-Za-z]+" title="Only letters are allowed" required>
+                <input type="text" placeholder="Family Name" pattern="[A-Za-z]+" title="Only letters are allowed" required>
+                <div class="birth-date">
+                    <select required>
+                        <option value="">Year</option>
+                        <option value="2014">2014</option>
+                        <option value="2013">2013</option>
+                        <option value="2012">2012</option>
+                        <option value="2011">2011</option>
+                        <option value="2010">2010</option>
+                        <option value="2009">2009</option>
+                        <option value="2008">2008</option>
+                        <option value="2007">2007</option>
+                        <option value="2006">2006</option>
+                        <option value="2005">2005</option>
+                    </select>
+                    <select required>
+                        <option value="">Month</option>
+                        <option value="1">January</option>
+                        <option value="2">February</option>
+                        <option value="3">March</option>
+                        <option value="4">April</option>
+                        <option value="5">May</option>
+                        <option value="6">June</option>
+                        <option value="7">July</option>
+                        <option value="8">August</option>
+                        <option value="9">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                    </select>
+                    <select required>
+                        <option value="">Day</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                        <option value="11">11</option>
+                        <option value="12">12</option>
+                        <option value="13">13</option>
+                        <option value="14">14</option>
+                        <option value="15">15</option>
+                        <option value="16">16</option>
+                        <option value="17">17</option>
+                        <option value="18">18</option>
+                        <option value="19">19</option>
+                        <option value="20">20</option>
+                        <option value="21">21</option>
+                        <option value="22">22</option>
+                        <option value="23">23</option>
+                        <option value="24">24</option>
+                        <option value="25">25</option>
+                        <option value="26">26</option>
+                        <option value="27">27</option>
+                        <option value="28">28</option>
+                        <option value="29">29</option>
+                        <option value="30">30</option>
+                        <option value="31">31</option>
+                    </select>
+                </div>
+                <div class="gender-group">
+                    <label>
+                        <input type="radio" name="gender" value="male" required>
+                        Male
+                    </label>
+                    <label>
+                        <input type="radio" name="gender" value="female" required>
+                        Female
+                    </label>
+                </div>
+                <div class="phone-group">
+                    <select required>
+                        <option value="">Code</option>
+                        <option value="+93">+93 Afghanistan</option>
+                        <option value="+355">+355 Albania</option>
+                        <option value="+213">+213 Algeria</option>
+                        <option value="+376">+376 Andorra</option>
+                        <option value="+244">+244 Angola</option>
+                        <option value="+54">+54 Argentina</option>
+                        <option value="+374">+374 Armenia</option>
+                        <option value="+61">+61 Australia</option>
+                        <option value="+43">+43 Austria</option>
+                        <option value="+994">+994 Azerbaijan</option>
+                        <option value="+973">+973 Bahrain</option>
+                        <option value="+880">+880 Bangladesh</option>
+                        <option value="+375">+375 Belarus</option>
+                        <option value="+32">+32 Belgium</option>
+                        <option value="+501">+501 Belize</option>
+                        <option value="+229">+229 Benin</option>
+                        <option value="+975">+975 Bhutan</option>
+                        <option value="+591">+591 Bolivia</option>
+                        <option value="+387">+387 Bosnia</option>
+                        <option value="+267">+267 Botswana</option>
+                        <option value="+55">+55 Brazil</option>
+                        <option value="+673">+673 Brunei</option>
+                        <option value="+359">+359 Bulgaria</option>
+                        <option value="+226">+226 Burkina Faso</option>
+                        <option value="+257">+257 Burundi</option>
+                        <option value="+855">+855 Cambodia</option>
+                        <option value="+237">+237 Cameroon</option>
+                        <option value="+1">+1 Canada</option>
+                        <option value="+56">+56 Chile</option>
+                        <option value="+86">+86 China</option>
+                        <option value="+57">+57 Colombia</option>
+                        <option value="+506">+506 Costa Rica</option>
+                        <option value="+385">+385 Croatia</option>
+                        <option value="+53">+53 Cuba</option>
+                        <option value="+357">+357 Cyprus</option>
+                        <option value="+420">+420 Czech Republic</option>
+                        <option value="+45">+45 Denmark</option>
+                        <option value="+253">+253 Djibouti</option>
+                        <option value="+593">+593 Ecuador</option>
+                        <option value="+20">+20 Egypt</option>
+                        <option value="+503">+503 El Salvador</option>
+                        <option value="+372">+372 Estonia</option>
+                        <option value="+251">+251 Ethiopia</option>
+                        <option value="+679">+679 Fiji</option>
+                        <option value="+358">+358 Finland</option>
+                        <option value="+33">+33 France</option>
+                        <option value="+241">+241 Gabon</option>
+                        <option value="+220">+220 Gambia</option>
+                        <option value="+995">+995 Georgia</option>
+                        <option value="+49">+49 Germany</option>
+                        <option value="+233">+233 Ghana</option>
+                        <option value="+30">+30 Greece</option>
+                        <option value="+502">+502 Guatemala</option>
+                        <option value="+224">+224 Guinea</option>
+                        <option value="+509">+509 Haiti</option>
+                        <option value="+504">+504 Honduras</option>
+                        <option value="+852">+852 Hong Kong</option>
+                        <option value="+36">+36 Hungary</option>
+                        <option value="+354">+354 Iceland</option>
+                        <option value="+91">+91 India</option>
+                        <option value="+62">+62 Indonesia</option>
+                        <option value="+98">+98 Iran</option>
+                        <option value="+964">+964 Iraq</option>
+                        <option value="+353">+353 Ireland</option>
+                        <option value="+972">+972 Israel</option>
+                        <option value="+39">+39 Italy</option>
+                        <option value="+81">+81 Japan</option>
+                        <option value="+962">+962 Jordan</option>
+                        <option value="+7">+7 Kazakhstan</option>
+                        <option value="+254">+254 Kenya</option>
+                        <option value="+965">+965 Kuwait</option>
+                        <option value="+996">+996 Kyrgyzstan</option>
+                        <option value="+856">+856 Laos</option>
+                        <option value="+371">+371 Latvia</option>
+                        <option value="+961">+961 Lebanon</option>
+                        <option value="+266">+266 Lesotho</option>
+                        <option value="+231">+231 Liberia</option>
+                        <option value="+218">+218 Libya</option>
+                        <option value="+370">+370 Lithuania</option>
+                        <option value="+352">+352 Luxembourg</option>
+                        <option value="+853">+853 Macau</option>
+                        <option value="+389">+389 Macedonia</option>
+                        <option value="+261">+261 Madagascar</option>
+                        <option value="+265">+265 Malawi</option>
+                        <option value="+60">+60 Malaysia</option>
+                        <option value="+960">+960 Maldives</option>
+                        <option value="+223">+223 Mali</option>
+                        <option value="+356">+356 Malta</option>
+                        <option value="+222">+222 Mauritania</option>
+                        <option value="+230">+230 Mauritius</option>
+                        <option value="+52">+52 Mexico</option>
+                        <option value="+373">+373 Moldova</option>
+                        <option value="+377">+377 Monaco</option>
+                        <option value="+976">+976 Mongolia</option>
+                        <option value="+382">+382 Montenegro</option>
+                        <option value="+212">+212 Morocco</option>
+                        <option value="+258">+258 Mozambique</option>
+                        <option value="+95">+95 Myanmar</option>
+                        <option value="+264">+264 Namibia</option>
+                        <option value="+977">+977 Nepal</option>
+                        <option value="+31">+31 Netherlands</option>
+                        <option value="+64">+64 New Zealand</option>
+                        <option value="+505">+505 Nicaragua</option>
+                        <option value="+227">+227 Niger</option>
+                        <option value="+234">+234 Nigeria</option>
+                        <option value="+47">+47 Norway</option>
+                        <option value="+968">+968 Oman</option>
+                        <option value="+92">+92 Pakistan</option>
+                        <option value="+970">+970 Palestine</option>
+                        <option value="+507">+507 Panama</option>
+                        <option value="+595">+595 Paraguay</option>
+                        <option value="+51">+51 Peru</option>
+                        <option value="+63">+63 Philippines</option>
+                        <option value="+48">+48 Poland</option>
+                        <option value="+351">+351 Portugal</option>
+                        <option value="+974">+974 Qatar</option>
+                        <option value="+40">+40 Romania</option>
+                        <option value="+7">+7 Russia</option>
+                        <option value="+250">+250 Rwanda</option>
+                        <option value="+966">+966 Saudi Arabia</option>
+                        <option value="+221">+221 Senegal</option>
+                        <option value="+381">+381 Serbia</option>
+                        <option value="+65">+65 Singapore</option>
+                        <option value="+421">+421 Slovakia</option>
+                        <option value="+386">+386 Slovenia</option>
+                        <option value="+252">+252 Somalia</option>
+                        <option value="+27">+27 South Africa</option>
+                        <option value="+82">+82 South Korea</option>
+                        <option value="+211">+211 South Sudan</option>
+                        <option value="+34">+34 Spain</option>
+                        <option value="+94">+94 Sri Lanka</option>
+                        <option value="+249">+249 Sudan</option>
+                        <option value="+597">+597 Suriname</option>
+                        <option value="+46">+46 Sweden</option>
+                        <option value="+41">+41 Switzerland</option>
+                        <option value="+963">+963 Syria</option>
+                        <option value="+886">+886 Taiwan</option>
+                        <option value="+992">+992 Tajikistan</option>
+                        <option value="+255">+255 Tanzania</option>
+                        <option value="+66">+66 Thailand</option>
+                        <option value="+228">+228 Togo</option>
+                        <option value="+216">+216 Tunisia</option>
+                        <option value="+90">+90 Turkey</option>
+                        <option value="+993">+993 Turkmenistan</option>
+                        <option value="+256">+256 Uganda</option>
+                        <option value="+380">+380 Ukraine</option>
+                        <option value="+971">+971 UAE</option>
+                        <option value="+44">+44 United Kingdom</option>
+                        <option value="+1">+1 United States</option>
+                        <option value="+598">+598 Uruguay</option>
+                        <option value="+998">+998 Uzbekistan</option>
+                        <option value="+58">+58 Venezuela</option>
+                        <option value="+84">+84 Vietnam</option>
+                        <option value="+967">+967 Yemen</option>
+                        <option value="+260">+260 Zambia</option>
+                        <option value="+263">+263 Zimbabwe</option>
+                    </select>
+                    <input type="tel" placeholder="Phone Number" pattern="[0-9]+" required>
+                </div>
+                <input type="email" placeholder="Email Address (Gmail only)" pattern="[a-zA-Z0-9._%+-]+@gmail\.com$" title="Only Gmail accounts are allowed" required>
+                <select required>
+                    <option value="">Select Certificate</option>
+                    <option value="elementary">Elementary Certificate</option>
+                    <option value="middle">Middle School Certificate</option>
+                    <option value="high">High School Certificate</option>
+                </select>
+                <button type="button" id="useLocation" style="background: #27ae60;">Use My Current Location</button>
+                <div class="jobs-group">
+                    <label><input type="radio" name="job" value="tutoring" id="tutoring" required>Physical Tutoring</label>
+                    <label><input type="radio" name="job" value="cashier" required>Cashier</label>
+                    <label><input type="radio" name="job" value="servant" required>Servant in a Cafe or Restaurant</label>
+                    <label><input type="radio" name="job" value="phone_assistant" required>Assistant in Phones Shop</label>
+                    <label><input type="radio" name="job" value="barber" required>Barber</label>
+                    <label><input type="radio" name="job" value="barber_assistant" required>Assistant of Barber</label>
+                    <label><input type="radio" name="job" value="carpenter" required>Carpenter</label>
+                </div>
+                <div class="subjects-group" id="subjects">
+                    <label><input type="radio" name="subject" value="math">Math</label>
+                    <label><input type="radio" name="subject" value="science">Science</label>
+                    <label><input type="radio" name="subject" value="english">English</label>
+                    <label><input type="radio" name="subject" value="history">History</label>
+                    <label><input type="radio" name="subject" value="physics">Physics</label>
+                    <label><input type="radio" name="subject" value="chemistry">Chemistry</label>
+                    <label><input type="radio" name="subject" value="biology">Biology</label>
+                    <label><input type="radio" name="subject" value="german">German</label>
+                    <label><input type="radio" name="subject" value="french">French</label>
+                    <label><input type="radio" name="subject" value="geography">Geography</label>
+                    <label><input type="radio" name="subject" value="social">Social Studies</label>
+                    <label><input type="radio" name="subject" value="psychology">Psychology</label>
+                </div>
+                <label style="color: #fff; font-size: 18px; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);">Skills Certificate (Optional):</label>
+                <input type="file" accept=".pdf" style="padding: 8px;">
+                <button type="submit">Submit</button>
+            </form>
+            <div id="map"></div>
+        </div>
+        </div>
+        
+        <div>
+        <div class="main-square">
+        <div class="inner-square"><video src="video (1).mp4" autoplay loop muted></video></div>
+        <div class="inner-square"><video src="video (2).mp4" autoplay loop muted></video></div>
+        <div class="inner-square"><video src="video (3).mp4" autoplay loop muted></video></div>
+        <div class="inner-square"><video src="video (4).mp4" autoplay loop muted></video></div>
+        </div>
+        <img src="girl.png" alt="Girl" class="girl-image">
+        </div>
+    </div>
+    <div class="copyright">© 2025 TeenWork Hub. All rights reserved.</div>
+</body>
+</html>
